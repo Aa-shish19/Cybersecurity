@@ -26,7 +26,7 @@ function isActiveForm($formName, $activeForm) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="   style.css">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
@@ -35,6 +35,33 @@ function isActiveForm($formName, $activeForm) {
             <form action="Website_Project.php" method="post">
                 <h2>Login</h2>
                 <?= showError($errors['login']); ?>
+
+                <?php if (isset($_SESSION['remaining_time'])): ?>
+                    <p id="countdown-message" style="color: red; text-align:center;"></p>
+                    <script>
+                        let remaining = <?= $_SESSION['remaining_time']; ?>;
+                        const countdownEl = document.getElementById('countdown-message');
+
+                        function updateCountdown() {
+                            if (remaining <= 0) {
+                                countdownEl.textContent = "";
+                                return;
+                            }
+
+                            let mins = Math.floor(remaining / 60);
+                            let secs = remaining % 60;
+                            countdownEl.textContent = `⏳ Please wait ${mins}:${secs.toString().padStart(2, '0')} before trying again.`;
+
+                            remaining--;
+                            setTimeout(updateCountdown, 1000);
+                        }
+
+                        updateCountdown();
+                    </script>
+                    <?php unset($_SESSION['remaining_time']); ?>
+
+                <?php endif; ?>
+
                 <input type="email" name="email" placeholder="Email" required>
                 <input type="password" name="password" placeholder="Password" required>
                 <button type="submit" name="login">Login</button>
@@ -61,34 +88,26 @@ function isActiveForm($formName, $activeForm) {
 
                 
                 <div class="recaptcha-wrapper">
-                <div class="g-recaptcha" 
-                    data-sitekey="6LeogForAAAAAEyBZtEDQ4Sh75up4QBdVawBxDQd"
-                    data-callback="onCaptchaSuccess"
-                    data-expired-callback="onCaptchaExpired">
-                <small style="display:block; text-align:center; margin-top:-10px; color:gray;">
-                Please verify the reCAPTCHA to enable the Register button
+                    <div class="g-recaptcha" 
+                        data-sitekey="6LeogForAAAAAEyBZtEDQ4Sh75up4QBdVawBxDQd"
+                        data-callback="onCaptchaSuccess"
+                        data-expired-callback="onCaptchaExpired">
+
+                    </div>
+                </div>
+                <small id="recaptcha-msg" style="display: none; text-align:center; margin-top:-10px; color:gray;">
+                    Please verify the reCAPTCHA to enable the Register button
                 </small>
 
-                </div>
-                </div>
+                
 
                 <p>Already have an account? <a href="#" onclick="showForm('login-form')">Login</a></p>
             </form>
         </div>
 
     </div>
-    <script src="script.js"></script>
-    <script>
-        function onCaptchaSuccess() {
-            document.getElementById('registerBtn').disabled = false;
-        }
-
-        function onCaptchaExpired() {
-            document.getElementById('registerBtn').disabled = true;
-        }
-        </script>
-</body>
-
+    
+    <!-- Password Strength Checker -->
 <script>
 const passwordField = document.getElementById('password');
 const strengthMsg = document.getElementById('strength-msg');
@@ -117,4 +136,36 @@ passwordField.addEventListener('input', () => {
 });
 </script>
 
+<!-- ✅ reCAPTCHA Logic -->
+<script>
+window.captchaVerified = false;
+
+function onCaptchaSuccess() {
+    window.captchaVerified = true;
+    document.getElementById('registerBtn').disabled = false;
+    document.getElementById('recaptcha-msg').style.display = 'none';
+}
+
+function onCaptchaExpired() {
+    window.captchaVerified = false;
+    document.getElementById('registerBtn').disabled = true;
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('#register-form form');
+    const recaptchaMsg = document.getElementById('recaptcha-msg');
+
+    form.addEventListener('submit', function (e) {
+        if (!window.captchaVerified) {
+            e.preventDefault();
+            recaptchaMsg.style.display = 'block';
+        }
+    });
+});
+</script>
+
+<!-- ✅ Load after the callbacks -->
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script src="script.js"></script>
+</body>
 </html>
