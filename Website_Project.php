@@ -20,8 +20,20 @@ if (isset($_POST['register'])) {
 
     $name = trim($_POST['name']);
     $email = trim($_POST['email']);
-    $password = password_hash(trim($_POST['password']), PASSWORD_DEFAULT);
-    $role = $_POST['role'];
+    $password = trim($_POST['password']);
+    $confirmPassword = trim($_POST['confirm_password']);
+    $role = 'user'; // Set role to 'user' by default
+
+    // Check if passwords match
+    if ($password !== $confirmPassword) {
+        $_SESSION['register_error'] = '❌ Passwords do not match.';
+        $_SESSION['active_form'] = 'register';
+        header("Location: index.php");
+        exit();
+    }
+
+    // Hash the password only after validation
+    $password = password_hash($password, PASSWORD_DEFAULT);
 
     $stmt = $conn->prepare("SELECT email FROM user WHERE email = ?");
     $stmt->bind_param("s", $email);
