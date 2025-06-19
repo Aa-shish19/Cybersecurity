@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once 'Website_Project.php'; // for logEvent()
 
 // Handle OTP form submission
 if (isset($_POST['verify_otp'])) {
@@ -8,14 +9,17 @@ if (isset($_POST['verify_otp'])) {
     $expiryTime = $_SESSION['otp_expiry'] ?? 0;
 
     if (time() > $expiryTime) {
-        $error = "❌ OTP has expired. Please request a new one.";
+        $error = " OTP has expired. Please request a new one.";
+        logEvent($conn, $_SESSION['otp_email'], 'OTP Expired', 'OTP expired before verification.');
         session_unset(); // clear expired OTP
     } elseif ($enteredOtp == $correctOtp) {
         $_SESSION['otp_verified'] = true;
-        header("Location: reset_password.php"); // ✅ redirect to next step
+        logEvent($conn, $_SESSION['otp_email'], 'OTP Verified', 'User successfully verified OTP.');
+        header("Location: reset_password.php");
         exit();
     } else {
-        $error = "❌ Invalid OTP. Please try again.";
+        $error = " Invalid OTP. Please try again.";
+        logEvent($conn, $_SESSION['otp_email'], 'OTP Failed', 'Incorrect OTP entered.');
     }
 }
 ?>
@@ -127,7 +131,7 @@ if (isset($_POST['verify_otp'])) {
     
     <form method="POST" action="verify_OTP.php">
         <div class="otp-card">
-            <p id="countdown" style="color:#162D8A; font-weight: 500;">OTP expires in <span id="timer">60</span> seconds</p>
+            <p id="countdown" style="color:#5772de; font-weight: 500;">OTP expires in <span id="timer">60</span> seconds</p>
             <h2>Enter OTP</h2>
             <?php if (isset($error)) echo "<p class='error-message'>$error</p>"; ?>
             <div class="otp-input-wrapper">
@@ -142,13 +146,13 @@ if (isset($_POST['verify_otp'])) {
             <button type="submit" name="verify_otp" class="verify-btn">VERIFY OTP</button>
             <p id="resend-msg" style="margin-top: 15px; display: none;">
                 Didn’t receive the OTP? 
-                <a href="send_OTP.php" style="color:#162D8A; font-weight: 500;">Resend OTP</a>
+                <a href="send_OTP.php" style="color:#5772de; font-weight: 500;">Resend OTP</a>
             </p>
         </div>
     </form>
 
     <script>
-    const boxes = document.querySelectorAll(".otp-input"); // ✅ correct class
+    const boxes = document.querySelectorAll(".otp-input"); //  correct class
     const hiddenOtp = document.getElementById("otp");
 
     boxes.forEach((box, i) => {

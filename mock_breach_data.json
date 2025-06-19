@@ -1,0 +1,12 @@
+{
+    "compromised_emails": [
+        "user@example.com",
+        "test@abc.com",
+        "admin@xyz.org"
+    ],
+    "breached_ips": [
+        "192.168.10.100",
+        "103.21.244.0",
+        "8.8.8.8"
+    ]
+}

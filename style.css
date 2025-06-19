@@ -185,3 +185,69 @@ p a:hover {
 .verify-btn:hover {
     background: linear-gradient(90deg, #5a67d8, #6b46c1);
 }
+
+/* Password Strength Bar */
+#strength-meter {
+    width: 100%;
+    height: 8px;
+    background-color: #2d2843;
+    border-radius: 20px;
+    margin-top: -10px;
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+
+#strength-bar {
+    height: 100%;
+    width: 0%;
+    background-color: red;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Strength Text */
+#strength-label {
+    font-size: 14px;
+    color: #bbb;
+    margin-bottom: 8px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+/* Checklist Styling */
+#password-checklist {
+    list-style: none;
+    padding-left: 0;
+    font-size: 13px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    color: #aa5555;
+}
+
+#password-checklist li {
+    margin-bottom: 3px;
+    transition: color 0.3s;
+    color: #c15f5f;
+    padding-left: 2px;
+}
+
+#password-checklist li.valid {
+    color: #4fd675; /* Tailwind-style green for success */
+}
+
+#password-checklist-wrapper {
+    background: #2d2843;
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin-top: 8px;
+    margin-bottom: 16px;
+    box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.05);
+}
+
+#password-checklist li.valid::before {
+    content: "✔ ";
+    color: #4fd675;
+}
+
+#password-checklist li::before {
+    transition: opacity 0.2s ease;
+}

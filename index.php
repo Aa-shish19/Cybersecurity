@@ -30,48 +30,48 @@ function isActiveForm($formName, $activeForm) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
         /* Fullscreen Video Background */
-#background-video {
-    position: fixed;
-    top: 0;
-    left: 0;
-    min-width: 100vw;
-    min-height: 100vh;
-    width: auto;
-    height: auto;
-    z-index: -1;
-    object-fit: cover;
-    background-size: cover;
-}
+        #background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            min-width: 100vw;
+            min-height: 100vh;
+            width: auto;
+            height: auto;
+            z-index: -1;
+            object-fit: cover;
+            background-size: cover;
+        }
 
-/* Ensure main content sits above the video */
-.container {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
+        /* Ensure main content sits above the video */
+        .container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-/* Optional: fallback background color */
-body {
-    margin: 0;
-    padding: 0;
-    font-family: sans-serif;
-    color: #f0f0f0;
-    background: #000; /* fallback */
-    overflow: hidden;
-}
-body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5); /* adjust darkness */
-    z-index: 0;
-}
+        /* Optional: fallback background color */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+            color: #f0f0f0;
+            background: #000; /* fallback */
+            
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5); /* adjust darkness */
+            z-index: 0;
+        }
 
     </style>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
@@ -129,7 +129,24 @@ body::before {
                 <input type="text" name="name" placeholder="Name" required>
                 <input type="email" name="email" placeholder="Email" required>
                 <input type="password" name="password" id="password" placeholder="Password" required autocomplete="off">
-                <p id="strength-msg" style="margin: 5px 0; font-weight: 500;"></p>
+                
+                <!-- Strength Meter -->
+                <div id="password-checklist-wrapper">
+                <div id="strength-meter">
+                <div id="strength-bar"></div>
+                </div>
+                <p id="strength-label">Strength:</p>
+
+                <!-- Checklist -->
+                <ul id="password-checklist">
+                <li id="length">At least 6 characters</li>
+                <li id="lowercase">One lowercase letter</li>
+                <li id="uppercase">One uppercase letter</li>
+                <li id="number">One number</li>
+                <li id="special">One special character</li>
+                </ul>
+                </div>
+                
                 <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required>
                 <small id="confirm-msg" style="color: red; display: none; font-size: 13px; margin-top: -15px; margin-bottom: 10px;">
                 Passwords do not match!
@@ -161,29 +178,51 @@ body::before {
     <!-- Password Strength Checker -->
 <script>
 const passwordField = document.getElementById('password');
-const strengthMsg = document.getElementById('strength-msg');
+const strengthBar = document.getElementById('strength-bar');
+const strengthLabel = document.getElementById('strength-label');
+
+const rules = {
+  length: document.getElementById('length'),
+  lowercase: document.getElementById('lowercase'),
+  uppercase: document.getElementById('uppercase'),
+  number: document.getElementById('number'),
+  special: document.getElementById('special'),
+};
 
 passwordField.addEventListener('input', () => {
-    const val = passwordField.value;
-    let strength = '';
-    let color = '';
+  const val = passwordField.value;
 
-    if (val.length < 6) {
-        strength = '❌ Too short';
-        color = 'red';
-    } else if (/[a-z]/.test(val) && /[A-Z]/.test(val) && /\d/.test(val) && /[^A-Za-z0-9]/.test(val)) {
-        strength = '✅ Strong password';
-        color = 'green';
-    } else if ((/[a-z]/.test(val) || /[A-Z]/.test(val)) && /\d/.test(val)) {
-        strength = '⚠️ Medium strength';
-        color = 'orange';
+  const validations = {
+    length: val.length >= 6,
+    lowercase: /[a-z]/.test(val),
+    uppercase: /[A-Z]/.test(val),
+    number: /\d/.test(val),
+    special: /[^A-Za-z0-9]/.test(val),
+  };
+
+  let passed = 0;
+  for (let key in validations) {
+    if (validations[key]) {
+      rules[key].classList.add('valid');
+      passed++;
     } else {
-        strength = '⚠️ Weak password';
-        color = 'red';
+      rules[key].classList.remove('valid');
     }
+  }
 
-    strengthMsg.textContent = strength;
-    strengthMsg.style.color = color;
+  const percent = (passed / 5) * 100;
+  strengthBar.style.width = percent + '%';
+
+  if (passed <= 2) {
+    strengthBar.style.backgroundColor = 'red';
+    strengthLabel.textContent = 'Strength: Weak';
+  } else if (passed === 3 || passed === 4) {
+    strengthBar.style.backgroundColor = 'orange';
+    strengthLabel.textContent = 'Strength: Moderate';
+  } else {
+    strengthBar.style.backgroundColor = 'green';
+    strengthLabel.textContent = 'Strength: Strong';
+  }
 });
 </script>
 

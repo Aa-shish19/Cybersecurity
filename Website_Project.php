@@ -1,7 +1,17 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once 'config.php';
 
+function logEvent($conn, $email, $eventType, $details = '') {
+    $ip = ($_SERVER['REMOTE_ADDR'] === '::1') ? '127.0.0.1 (localhost)' : $_SERVER['REMOTE_ADDR'];
+    $details .= " | IP: $ip";
+    $stmt = $conn->prepare("INSERT INTO logs (user_email, event_type, details) VALUES (?, ?, ?)");
+    $stmt->bind_param("sss", $email, $eventType, $details);
+    $stmt->execute();
+}
 
 // ========================= REGISTER =========================
 if (isset($_POST['register'])) {
@@ -12,7 +22,7 @@ if (isset($_POST['register'])) {
     $response = json_decode($verify);
 
     if (!$response->success) {
-        $_SESSION['register_error'] = "❌ Please verify that you're not a robot.";
+        $_SESSION['register_error'] = " Please verify that you're not a robot.";
         $_SESSION['active_form'] = 'register';
         header("Location: index.php");
         exit();
@@ -26,7 +36,20 @@ if (isset($_POST['register'])) {
 
     // Check if passwords match
     if ($password !== $confirmPassword) {
-        $_SESSION['register_error'] = '❌ Passwords do not match.';
+        $_SESSION['register_error'] = ' Passwords do not match.';
+        $_SESSION['active_form'] = 'register';
+        header("Location: index.php");
+        exit();
+    }
+
+    // Enforce strong password policy
+    if (
+        !preg_match('/[A-Z]/', $password) ||      // at least one uppercase
+        !preg_match('/[a-z]/', $password) ||      // at least one lowercase
+        !preg_match('/[0-9]/', $password) ||      // at least one digit
+        !preg_match('/[^A-Za-z0-9]/', $password)  // at least one special character
+    ) {
+        $_SESSION['register_error'] = ' Password must include at least one uppercase letter, one lowercase letter, one number, and one special character.';
         $_SESSION['active_form'] = 'register';
         header("Location: index.php");
         exit();
@@ -47,7 +70,8 @@ if (isset($_POST['register'])) {
         $stmt = $conn->prepare("INSERT INTO user (name, email, password, role) VALUES (?, ?, ?, ?)");
         $stmt->bind_param("ssss", $name, $email, $password, $role);
         if ($stmt->execute()) {
-            $_SESSION['register_success'] = '✅ Registration successful! Please login.';
+            $_SESSION['register_success'] = ' Registration successful! Please login.';
+            logEvent($conn, $email, 'register', 'New user registered');
             $_SESSION['active_form'] = 'login';
         } else {
             $_SESSION['register_error'] = 'Error during registration.';
@@ -101,15 +125,15 @@ if (isset($_POST['login'])) {
 
             $_SESSION['login_attempts'] = 0;
             $_SESSION['last_attempt_time'] = null;
-
+            logEvent($conn, $email, 'login_success', 'User logged in successfully');
             
             $_SESSION['user_id'] = $user['Id'];
             $_SESSION['name'] = $user['Name'];
             $_SESSION['email'] = $user['Email'];
             $_SESSION['role'] = $user['Role'];
-            $_SESSION['login_success'] = '✅ Login successful! Welcome back.';
+            $_SESSION['login_success'] = ' Login successful! Welcome back.';
 
-            if ($user['role'] === 'admin') {
+            if ($_SESSION['role'] === 'admin') {
                 header("Location: admin_page.php");
             } else {
                 header("Location: user_page.php");
@@ -123,6 +147,8 @@ if (isset($_POST['login'])) {
     $_SESSION['last_attempt_time'] = time();
     $_SESSION['login_error'] = "Incorrect email or password.";
     $_SESSION['active_form'] = 'login';
+    logEvent($conn, $email, 'login_failed', 'Invalid credentials entered');
+
     header("Location: index.php");
     exit();
    
