@@ -40,16 +40,15 @@ The primary focus is on **secure system design**, implementing **multi-layered d
 8. **Password History Tracking** – Prevents reuse of the last 5 passwords using `password_history` table.
 9. **Password Strength Feedback** – Real-time JS feedback to guide users while choosing a strong password.
 10. **CAPTCHA Verification** – reCAPTCHA blocks bots from automated form submissions.
-11. **CSRF Token System** – Token generated and verified for sensitive POST actions.
-12. **Session Management** – Session start, validation, and expiration handling.
-13. **Role-Based Access Control** – Session-based access for Admin/User dashboards.
-14. **Admin Dashboard** – Restricted admin interface to view logs, users, and monitor activity.
-15. **User Dashboard** – Secure user area with personal info and change password access.
-16. **Login Attempt Logging** – Logs all login attempts, including timestamps and status.
-17. **IP Address Tracking** – Captures client IP on every sensitive action for auditing.
-18. **Logs Viewer (Admin)** – Admin can view breach simulation logs from JSON file.
-19. **Email Sending (OTP)** – OTPs sent securely via SMTP using PHPMailer.
-20. **Database Access (MySQLi)** – All DB operations use prepared statements to prevent SQL injection.
+11. **Session Management** – Session start, validation, and expiration handling.
+12. **Role-Based Access Control** – Session-based access for Admin/User dashboards.
+13. **Admin Dashboard** – Restricted admin interface to view logs, users, and monitor activity.
+14. **User Dashboard** – Secure user area with personal info and change password access.
+15. **Login Attempt Logging** – Logs all login attempts, including timestamps and status.
+16. **IP Address Tracking** – Captures client IP on every sensitive action for auditing.
+17. **Logs Viewer (Admin)** – Admin can view breach simulation logs from JSON file.
+18. **Email Sending (OTP)** – OTPs sent securely via SMTP using PHPMailer.
+19. **Database Access (MySQLi)** – All DB operations use prepared statements to prevent SQL injection.
 
 ---
 

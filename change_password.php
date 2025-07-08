@@ -152,7 +152,7 @@ if (isset($_POST['change_password'])) {
 
             <input type="password" name="confirm_password" placeholder="Confirm New Password" required>
             <button type="submit" name="change_password">Change Password</button>
-            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+            <input type="hidden" name="csrf_token" value="<?= isset($_SESSION['csrf_token']) ? htmlspecialchars($_SESSION['csrf_token']) : '' ?>">
         </form>
     </div>
    <?php if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($successMessage)) : ?>

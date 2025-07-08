@@ -28,7 +28,7 @@ if (isset($_POST['send_otp'])) {
         $otp = rand(100000, 999999);
         $_SESSION['otp'] = $otp;
         $_SESSION['otp_email'] = $email;
-        $_SESSION['otp_expiry'] = time() + (5 * 60); // 5 minutes
+        $_SESSION['otp_expiry'] = time() + (1 * 60); // 1 minutes
 
         $ip = ($_SERVER['REMOTE_ADDR'] === '::1') ? '127.0.0.1' : $_SERVER['REMOTE_ADDR'];
         $details = "OTP sent to $email from IP: $ip";

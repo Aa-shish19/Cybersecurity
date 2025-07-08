@@ -274,7 +274,7 @@ if (isset($_POST['reset_password'])) {
             "></i>
         </div>
         <button type="submit" name="reset_password">Reset Password</button>
-        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+        <input type="hidden" name="csrf_token" value="<?= isset($_SESSION['csrf_token']) ? htmlspecialchars($_SESSION['csrf_token']) : '' ?>">
     </form>
 </div>
 
