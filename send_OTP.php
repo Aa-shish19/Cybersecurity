@@ -44,8 +44,8 @@ if (isset($_POST['send_otp'])) {
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username = 'nischalparajuli69@gmail.com';
-            $mail->Password = 'zvejvxviozpaaxwc'; //  Your app password
+            $mail->Username = 'nischalparajuli69@gmail.com'; //Your Username or Email
+            $mail->Password = ''; //  Your app password
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
 
