@@ -15,7 +15,7 @@ function logEvent($conn, $email, $eventType, $details = '') {
 
 // ========================= REGISTER =========================
 if (isset($_POST['register'])) {
-    $recaptchaSecret = "6LeogForAAAAAJSJXc_FiWjT2ogONySKcXq9QiOB";
+    $recaptchaSecret = "";
     $recaptchaResponse = $_POST['g-recaptcha-response'];
 
     $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$recaptchaSecret}&response={$recaptchaResponse}");
@@ -42,7 +42,7 @@ if (isset($_POST['register'])) {
         exit();
     }
 
-    // Enforce strong password policy
+    // Enforce a strong password policy
     if (
         !preg_match('/[A-Z]/', $password) ||      // at least one uppercase
         !preg_match('/[a-z]/', $password) ||      // at least one lowercase
